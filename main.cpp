@@ -1,3 +1,6 @@
+// para compilar:
+// g++ -Wall -std=c++17 Load_Graph.cpp Experimento.cpp Graph.cpp Metricas.cpp main.cpp -o main
+
 #include "Graph.h"
 #include "Metricas.h"
 #include "Load_Graph.h"
@@ -105,8 +108,8 @@ int main(int argc, char* argv[]) {
     // 2. Datasets reales
     // --------------------------------------------------------
     // Ejemplos con tus archivos:
-    //   ./graph_analysis imdb_edgelist.csv imdb
-    //   ./graph_analysis train_test_network.csv traffic
+    //   ./main imdb_edgelist.csv imdb
+    //   ./main train_test_network.csv traffic
 
     if (argc >= 3) {
         std::string filepath = argv[1];
@@ -146,11 +149,11 @@ int main(int argc, char* argv[]) {
         Experimento::edgeImpactExperiment(g, dtype);
     } else {
         std::cout << "\n[INFO] Para usar con datasets reales:\n";
-        std::cout << "  ./graph_analysis <archivo> <tipo> [reps] [maxEdges|ano] [maxEdgesTrade]\n";
+        std::cout << "  ./main <archivo> <tipo> [reps] [maxEdges|ano] [maxEdgesTrade]\n";
         std::cout << "  Tipos: imdb | traffic | train_test | trade | edgelist | weighted\n";
-        std::cout << "  Ejemplo: ./graph_analysis imdb_edgelist.csv imdb 10\n";
-        std::cout << "  Ejemplo: ./graph_analysis imdb_edgelist.csv imdb 10 50000\n";
-        std::cout << "  Ejemplo: ./graph_analysis train_test_network.csv traffic 10 50000\n";
+        std::cout << "  Ejemplo: ./main imdb_edgelist.csv imdb 10\n";
+        std::cout << "  Ejemplo: ./main imdb_edgelist.csv imdb 10 50000\n";
+        std::cout << "  Ejemplo: ./main train_test_network.csv traffic 10 50000\n";
     }
 
     return 0;
