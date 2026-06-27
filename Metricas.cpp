@@ -47,7 +47,10 @@ std::unordered_map<int, double> Metricas::dijkstra(const Graph& g, int src) {
     pq.push({0.0, src});
 
     while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
+        auto topPair = pq.top(); pq.pop();
+        double d = topPair.first;
+        int u = topPair.second;
+        
         if (d > dist[u]) continue;
         for (const Edge& e : g.neighbors(u)) {
             double nd = dist[u] + e.weight;
@@ -133,8 +136,11 @@ MetricMap Metricas::betweennessCentrality(const Graph& g, bool normalized) {
             pq.push({0.0, s});
 
             while (!pq.empty()) {
-                auto [dv, v] = pq.top();
+                auto topPair = pq.top();
                 pq.pop();
+                double dv = topPair.first;
+                int v = topPair.second;
+                
                 if (dv > dist[v]) continue;
 
                 S.push(v);
