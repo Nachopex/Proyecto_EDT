@@ -10,9 +10,6 @@ struct RunResult {
     std::string metricName;
     double meanMs;       // Tiempo promedio en ms
     double varianceMs;   // Varianza del tiempo
-    double stddevMs;     // Desviación estándar
-    double minMs;
-    double maxMs;
     int repetitions;
 };
 
