@@ -88,7 +88,6 @@ Graph LoadGraph::loadIMDb(const std::string& filepath, int maxEdges) {
         int id2 = g.addVertex(cols[1]);
         
         g.addEdge(id1, id2);
-        g.addEdge(id2, id1); // Al ser no dirigido, creamos el enlace inverso
         edgeCount++;
     }
     
