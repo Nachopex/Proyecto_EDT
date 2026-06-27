@@ -23,7 +23,6 @@ RunResult Experimento::benchmark(
     int reps)
 {
     std::vector<double> times(reps);
-    auto tBenchmarkStart = Clock::now();
 
     for (int i = 0; i < reps; i++) {
         auto t0 = Clock::now();
