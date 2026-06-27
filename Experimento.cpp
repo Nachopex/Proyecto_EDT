@@ -11,41 +11,6 @@
 
 using Clock = std::chrono::high_resolution_clock;
 
-namespace {
-// Función que formatea segundos a HH:MM:SS
-std::string formatSeconds(double seconds) {
-    if (seconds < 0) seconds = 0;
-    long long total = static_cast<long long>(seconds + 0.5);
-    long long h = total / 3600;
-    long long m = (total % 3600) / 60;
-    long long s = total % 60;
-
-    std::ostringstream oss;
-    oss << std::setfill('0');
-    if (h > 0) oss << h << ':';
-    oss << std::setw(2) << m << ':'
-        << std::setw(2) << s;
-    return oss.str();
-}
-
-//Esta función imprime progreso en tiempo real
-void printProgressLine(const std::string& name, int done, int total,
-                       double elapsedMs, double etaMs) {
-    int width = 24;
-    double ratio = (total > 0) ? static_cast<double>(done) / total : 1.0;
-    int filled = static_cast<int>(ratio * width);
-    if (filled > width) filled = width;
-
-    std::cout << '\r' << std::left << std::setw(26) << name << " [";
-    for (int i = 0; i < width; ++i) std::cout << (i < filled ? '#' : '-');
-    std::cout << "] " << std::setw(3) << static_cast<int>(ratio * 100.0) << "% "
-              << done << "/" << total
-              << " transcurrido: " << formatSeconds(elapsedMs / 1000.0)
-              << " restante aprox: " << formatSeconds(etaMs / 1000.0)
-              << std::flush;
-}
-
-} // namespace
 
 // ============================================================
 // Benchmark: corre una función métrica con repeticiones y reporta
@@ -66,21 +31,7 @@ RunResult Experimento::benchmark(
         auto t1 = Clock::now();
         times[i] = std::chrono::duration<double, std::milli>(t1 - t0).count();
 
-        // mostramos progreso 
-        auto now = Clock::now();
-        double elapsedMs = std::chrono::duration<double, std::milli>(now - tBenchmarkStart).count();
-        double avgMs = elapsedMs / (i + 1);
-        double etaMs = avgMs * (reps - (i + 1));
-        printProgressLine(name, i + 1, reps, elapsedMs, etaMs);
     }
-
-    // linea final del progreso 
-    std::cout << "\r" << std::left << std::setw(26) << name
-              << " [########################] 100% "
-              << reps << "/" << reps
-              << " transcurrido: " << formatSeconds(
-                     std::chrono::duration<double, std::milli>(Clock::now() - tBenchmarkStart).count() / 1000.0)
-              << " restante aprox: 00:00" << "        \n";
 
     //calculo de estadísticas
     double mean = std::accumulate(times.begin(), times.end(), 0.0) / reps;
@@ -92,9 +43,6 @@ RunResult Experimento::benchmark(
         name,
         mean,
         var,
-        std::sqrt(var),
-        *std::min_element(times.begin(), times.end()),
-        *std::max_element(times.begin(), times.end()),
         reps
     };
 }
@@ -186,9 +134,6 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
         return g.neighbors(a).size() > g.neighbors(b).size();
     });
 
-    int hub1 = verts[0], hub2 = verts[1];
-    int peri1 = verts[verts.size()-2], peri2 = verts[verts.size()-1];
-
     // Arista aleatoria
     std::mt19937 rng(42);
     std::uniform_int_distribution<int> dist(0, static_cast<int>(verts.size())-1);
@@ -276,19 +221,10 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
 
     // --- AÑADIR aristas ---
     std::cout << "\n--- Pruebas de ADICION de aristas ---\n";
-    testAddEdge("Entre hubs (alto grado)", hub1, hub2);
-    testAddEdge("Entre perifericos (bajo grado)", peri1, peri2);
     testAddEdge("Aleatoria", rand1, rand2);
 
     // --- QUITAR aristas ---
     std::cout << "\n--- Pruebas de ELIMINACION de aristas ---\n";
-    // Para quitar, necesitamos aristas existentes. se eliminan desde hub y desde periférico
-    if (!g.neighbors(hub1).empty())
-        testRemoveEdge("Desde hub de alto grado", hub1, g.neighbors(hub1)[0].dest);
-    
-    if (!g.neighbors(peri1).empty())
-        testRemoveEdge("Desde nodo periferico", peri1, g.neighbors(peri1)[0].dest);
-    
     // quitar arista aleatoria existente
     std::uniform_int_distribution<int> dist2(0, static_cast<int>(verts.size())-1);
     for (int attempt = 0; attempt < 20; attempt++) {
@@ -315,9 +251,6 @@ void Experimento::printResults(const std::vector<RunResult>& results,
               << std::setw(30) << "Metrica"
               << std::setw(12) << "Media(ms)"
               << std::setw(12) << "Var(ms2)"
-              << std::setw(12) << "StdDev(ms)"
-              << std::setw(10) << "Min(ms)"
-              << std::setw(10) << "Max(ms)"
               << "\n";
     std::cout << "-------------------------------------------------\n";
     for (const auto& r : results) {
@@ -325,9 +258,6 @@ void Experimento::printResults(const std::vector<RunResult>& results,
                   << std::setw(30) << std::left  << r.metricName
                   << std::setw(12) << r.meanMs
                   << std::setw(12) << r.varianceMs
-                  << std::setw(12) << r.stddevMs
-                  << std::setw(10) << r.minMs
-                  << std::setw(10) << r.maxMs
                   << "\n";
     }
     std::cout << "=================================================\n";
@@ -339,15 +269,12 @@ void Experimento::printResults(const std::vector<RunResult>& results,
 void Experimento::saveCSV(const std::vector<RunResult>& results,
                           const std::string& filename) {
     std::ofstream f(filename);
-    f << "metrica,media_ms,varianza_ms2,stddev_ms,min_ms,max_ms,repeticiones\n";
+    f << "metrica,media_ms,varianza_ms2,repeticiones\n";
     for (const auto& r : results) {
         f << std::fixed << std::setprecision(6)
           << r.metricName << ","
           << r.meanMs << ","
           << r.varianceMs << ","
-          << r.stddevMs << ","
-          << r.minMs << ","
-          << r.maxMs << ","
           << r.repetitions << "\n";
     }
     std::cout << "Resultados guardados en: " << filename << "\n";
