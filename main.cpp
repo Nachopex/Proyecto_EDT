@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 #include <iomanip>
+#include <fstream>
 #include "Graph.h"
 #include "Load_Graph.h"
 #include "Experimento.h"
@@ -39,7 +40,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Uso general: ./main <comando> [repeticiones] [max_aristas]\n";
         std::cerr << "Comandos soportados:\n";
         std::cerr << "  trade  -> Procesa los archivos de la Red de Comercio (Trade_Network/)\n";
-        std::cerr << "  imdb   -> Procesa la Red de Actores (IMDb_actors_network/)\n";
+        std::cerr << "  imdb   -> Procesa la Red de Actores (IMDb_actors_ network/)\n";
         std::cerr << "\nEjemplos de ejecucion:\n";
         std::cerr << "  ./main trade 10\n"; 
         std::cerr << "  ./main imdb 10\n";
@@ -94,9 +95,25 @@ int main(int argc, char* argv[]) {
         int reps = (argc >= 3) ? std::atoi(argv[2]) : 10;
         int maxEdges = (argc >= 4) ? std::atoi(argv[3]) : -1;
         
-        std::string filepath = "IMDb_actors_network/imdb_edgelist.csv";
+        std::vector<std::string> posiblesRutas = {
+            "IMDb_actors_ network/imdb_edgelist.csv",
+            "IMDb_actors_network/imdb_edgelist.csv"
+        };
+
+        std::string filepath;
+        for (const std::string& ruta : posiblesRutas) {
+            std::ifstream archivo(ruta);
+            if (archivo.good()) {
+                filepath = ruta;
+                break;
+            }
+        }
 
         try {
+            if (filepath.empty()) {
+                throw std::runtime_error("No se encontro el archivo imdb_edgelist.csv en la carpeta esperada.");
+            }
+
             std::cout << "\n\n//////////////////////////////////////////////////";
             std::cout << "\n/// INICIANDO ANALISIS DE: " << filepath;
             std::cout << "\n//////////////////////////////////////////////////\n";
@@ -109,7 +126,7 @@ int main(int argc, char* argv[]) {
 
         } catch (const std::exception& e) {
             std::cerr << "Error al cargar el dataset IMDb: " << e.what() << "\n";
-            std::cerr << "Verifique la existencia del directorio 'IMDb_actors_network' y el archivo .csv.\n";
+            std::cerr << "Verifique la existencia de la carpeta 'IMDb_actors_ network' y el archivo imdb_edgelist.csv.\n";
             return 1;
         }
         return 0;
