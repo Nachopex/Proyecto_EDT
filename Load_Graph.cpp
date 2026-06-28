@@ -49,12 +49,12 @@ std::vector<std::string> splitCsv(const std::string& line) {
 
 // ============================================================
 // Carga de red de actores (IMDb)
-// Grafo: No dirigido, sin peso.
+// Grafo: No dirigido, con peso.
 // ============================================================
 Graph LoadGraph::loadIMDb(const std::string& filepath, int maxEdges) {
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    Graph g(false); // false = Inicializa un grafo no dirigido
+    Graph g(false, true); 
 
     std::ifstream file(filepath);
     if (!file.is_open()) {
@@ -87,7 +87,16 @@ Graph LoadGraph::loadIMDb(const std::string& filepath, int maxEdges) {
         int id1 = g.addVertex(cols[0]);
         int id2 = g.addVertex(cols[1]);
         
-        g.addEdge(id1, id2);
+        double weight = 1.0;
+        if (cols.size() >= 3 && !cols[2].empty()) {
+            try {
+                weight = std::stod(cols[2]);
+            } catch (...) {
+                weight = 1.0;
+            }
+        }
+
+        g.addEdge(id1, id2, weight);
         edgeCount++;
     }
     
@@ -98,7 +107,7 @@ Graph LoadGraph::loadIMDb(const std::string& filepath, int maxEdges) {
               << ", Aristas: " << g.numEdges()
               << ", Tiempo de carga: " << std::fixed << std::setprecision(2) << elapsed << " ms\n";
     return g;
-} 
+}
 
 // ============================================================
 // Carga de red de Comercio Mundial (World Trade Network)
