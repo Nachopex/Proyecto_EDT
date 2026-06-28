@@ -161,7 +161,6 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
         }
         std::cout << "\n  [AÑADIR] " << tipo << " (" << src << " -> " << dst << ")\n";
         g.addEdge(src, dst, w);
-        if (undirectedMode) g.addEdge(dst, src, w);
 
         auto bcNew = Metricas::betweennessCentrality(g);
         auto ccNew = Metricas::closenessCentrality(g);
@@ -183,7 +182,6 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
 
         // Deshacer el cambio
         g.removeEdge(src, dst);
-        if (undirectedMode) g.removeEdge(dst, src);
     };
 
     // Función auxiliar para medir impacto al quitar una arista existente
@@ -198,7 +196,6 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
 
         std::cout << "\n  [QUITAR] " << tipo << " (" << src << " -> " << dst << ")\n";
         g.removeEdge(src, dst);
-        if (undirectedMode) g.removeEdge(dst, src);
 
         auto bcNew = Metricas::betweennessCentrality(g);
         auto ccNew = Metricas::closenessCentrality(g);
@@ -215,7 +212,6 @@ void Experimento::edgeImpactExperiment(Graph& g, const std::string& datasetName)
 
         // Restaurar arista
         g.addEdge(src, dst, savedWeight);
-        if (undirectedMode) g.addEdge(dst, src, savedReverseWeight);
     };
 
     // --- AÑADIR aristas ---
