@@ -45,8 +45,8 @@ en caso de no colocar parametros se haran 10 repeticiones y se tomaran todas las
 
 Para la ejecucion con parametros opcionales
 ```bash
-./main imdb repeticiones aristas
+./main imdb [repeticiones] [aristas]
 ```
 ```bash
-./main trade repeticiones aristas
+./main trade [repeticiones] [aristas]
 ```
