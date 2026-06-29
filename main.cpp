@@ -1,5 +1,5 @@
 // Comando de compilacion:
-// g++ -Wall -std=c++17 Load_Graph.cpp Experimento.cpp Graph.cpp Metricas.cpp main.cpp -o main
+// g++ -std=c++17 Load_Graph.cpp Experimento.cpp Graph.cpp Metricas.cpp main.cpp -o main
 
 #include <iostream>
 #include <vector>
