@@ -41,6 +41,8 @@ Para la ejecucion normal con Trade Network:
 ```bash
 ./main trade
 ```
+en caso de no colocar parametros se haran 10 repeticiones y se tomaran todas las aristas.
+
 Para la ejecucion con parametros opcionales
 ```bash
 ./main imdb repeticiones aristas
