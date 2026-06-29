@@ -29,7 +29,7 @@ A través de la ejecución en consola mediante parámetros, el programa permite:
 # Sobre la compilación y ejecución
 Para probar este proyecto, se debe abrir la terminal en el directorio de los archivos fuente y compilar con el siguiente comando:
 ```bash
-g++ -Wall -std=c++17 Load_Graph.cpp Experimento.cpp Graph.cpp Metricas.cpp main.cpp -o main
+g++ -std=c++17 Load_Graph.cpp Experimento.cpp Graph.cpp Metricas.cpp main.cpp -o main
 ```
 Para ejecutar el programa, se debe indicar el dataset a analizar y (opcionalmente) la cantidad de repeticiones para el cálculo o tambien las aristas maximas.
 
